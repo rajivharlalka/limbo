@@ -300,6 +300,15 @@ pub fn translate_expr(
                             });
                             Ok(target_register)
                         }
+                        ScalarFunc::UnixEpoch => {
+                            let start_reg = program.alloc_register();
+                            program.emit_insn(Insn::Function {
+                                start_reg,
+                                dest: target_register,
+                                func: srf,
+                            });
+                            Ok(target_register)
+                        }
                         ScalarFunc::Time => {
                             let mut start_reg = 0;
                             if let Some(args) = args {
