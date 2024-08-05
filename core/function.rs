@@ -56,7 +56,7 @@ pub enum ScalarFunc {
     Date,
     Time,
     Unicode,
-    UnixEpoch
+    UnixEpoch,
 }
 
 impl ToString for ScalarFunc {
