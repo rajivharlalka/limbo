@@ -35,6 +35,7 @@ use crate::Result;
 
 use datetime::{exec_date, exec_time, exec_unixepoch};
 
+use libc::printf;
 use regex::Regex;
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
@@ -1347,12 +1348,29 @@ impl Program {
                         }
                         state.pc += 1;
                     }
-                    Func::UnixEpoch => {
-                        let unixepoch: String = exec_unixepoch()?;
-                        state.registers[*dest] = OwnedValue::Text(Rc::new(unixepoch));
+                    Func::Scalar(ScalarFunc::UnixEpoch) => {
+                        if *start_reg == 0 {
+                            let unixepoch: String =
+                                exec_unixepoch(&OwnedValue::Text(Rc::new("now".to_string())))?;
+                            state.registers[*dest] = OwnedValue::Text(Rc::new(unixepoch));
+                        } else {
+                            let datetime_value = &state.registers[*start_reg];
+                            let unixepoch = exec_unixepoch(datetime_value);
+                            match unixepoch {
+                                Ok(time) => {
+                                    state.registers[*dest] = OwnedValue::Text(Rc::new(time))
+                                }
+                                Err(e) => {
+                                    return Err(LimboError::ParseError(format!(
+                                        "Error encountered while parsing datetime value: {}",
+                                        e
+                                    )));
+                                }
+                            }
+                        }
                         state.pc += 1
                     }
-                    Func::Unicode => {
+                    Func::Scalar(ScalarFunc::Unicode) => {
                         let reg_value = state.registers[*start_reg].borrow_mut();
                         state.registers[*dest] = exec_unicode(reg_value);
                         state.pc += 1;
