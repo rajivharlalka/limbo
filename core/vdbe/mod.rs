@@ -35,7 +35,6 @@ use crate::Result;
 
 use datetime::{exec_date, exec_time, exec_unixepoch};
 
-use libc::printf;
 use regex::Regex;
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
