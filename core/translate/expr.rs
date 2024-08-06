@@ -320,7 +320,7 @@ pub fn translate_expr(
                             program.emit_insn(Insn::Function {
                                 start_reg,
                                 dest: target_register,
-                                func: srf,
+                                func: crate::vdbe::Func::Scalar(srf),
                             });
                             Ok(target_register)
                         }
